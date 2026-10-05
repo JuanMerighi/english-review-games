@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Review Games</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one column, a menu of three games, each game replaces the menu. Palette taken from the Canva deck: coral, butter yellow, cream, deep blue. */
+:root {
+  --bg: #fff8ee; --card: #ffffff; --fg: #2a2230; --muted: #6f6677;
+  --coral: #e9635a; --coral-ink: #ffffff; --sun: #ffcb4f; --sun-ink: #3a2c00;
+  --blue: #1553b8; --good: #1f8a52; --good-bg: #dff5e8; --bad: #c0392b; --bad-bg: #fde3df;
+  --line: #f0ddc8;
+  --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1d1822; --card: #2a2330; --fg: #f6eee6; --muted: #b7acbd;
+  --coral: #ef7a71; --coral-ink: #2a0f0d; --sun: #ffcb4f; --sun-ink: #3a2c00;
+  --blue: #7ea8ff; --good: #5fd592; --good-bg: #1c3a2a; --bad: #ff8a7c; --bad-bg: #44211d; --line: #403648; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #1d1822; --card: #2a2330; --fg: #f6eee6; --muted: #b7acbd;
+  --coral: #ef7a71; --coral-ink: #2a0f0d; --sun: #ffcb4f; --sun-ink: #3a2c00;
+  --blue: #7ea8ff; --good: #5fd592; --good-bg: #1c3a2a; --bad: #ff8a7c; --bad-bg: #44211d; --line: #403648; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5; padding-inline: 16px; padding-block: 24px 48px; }
+main { max-width: 720px; margin: 0 auto; display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.1; margin: 0; text-wrap: balance; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+.hero { background: var(--coral); color: var(--coral-ink); border-radius: 28px; padding: 28px 24px; display: grid; gap: 8px; }
+.hero h1 { font-size: clamp(2rem, 8vw, 3.2rem); font-weight: 700; text-transform: uppercase; }
+.hero h1 span { color: var(--sun); display: block; }
+.hero p { margin: 0; font-weight: 700; }
+
+.menu { display: grid; gap: 12px; }
+.pick { text-align: left; background: var(--card); border: 2px solid var(--line); border-radius: 20px; padding: 16px 18px; display: grid; gap: 4px; color: var(--fg); transition: transform .12s; }
+.pick:hover { transform: translateY(-2px); border-color: var(--coral); }
+.pick .tag { font-family: var(--display); font-weight: 600; color: var(--coral); font-size: .95rem; text-transform: uppercase; letter-spacing: .06em; }
+.pick h2 { font-size: 1.5rem; }
+.pick small { color: var(--muted); font-size: .95rem; }
+.pick .best { font-weight: 800; color: var(--good); }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.back { background: none; border: 2px solid var(--line); color: var(--fg); border-radius: 999px; padding: 6px 14px; font-weight: 800; }
+.score { font-family: var(--display); font-weight: 600; font-variant-numeric: tabular-nums; background: var(--sun); color: var(--sun-ink); border-radius: 999px; padding: 6px 16px; }
+.bar { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--coral); width: 0; transition: width .3s; }
+
+.panel { background: var(--card); border: 2px solid var(--line); border-radius: 24px; padding: 22px; display: grid; gap: 16px; }
+.panel .eyebrow { color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: .8rem; }
+.sentence { font-size: clamp(1.2rem, 4.6vw, 1.6rem); font-weight: 700; line-height: 1.5; }
+.gap { display: inline-block; min-width: 4.5em; border-bottom: 3px solid var(--coral); text-align: center; color: var(--coral); }
+.gap.ok { color: var(--good); border-color: var(--good); }
+.gap.no { color: var(--bad); border-color: var(--bad); }
+.opts { display: flex; flex-wrap: wrap; gap: 10px; }
+.opt { background: var(--bg); color: var(--fg); border: 2px solid var(--line); border-radius: 14px; padding: 10px 16px; font-weight: 800; }
+.opt:hover:not(:disabled) { border-color: var(--coral); }
+.opt.ok { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.opt.no { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+.opt:disabled { cursor: default; }
+.fb { min-height: 1.6em; font-weight: 800; }
+.fb.ok { color: var(--good); } .fb.no { color: var(--bad); }
+.cta { background: var(--coral); color: var(--coral-ink); border: 0; border-radius: 14px; padding: 12px 22px; font-family: var(--display); font-weight: 600; font-size: 1.1rem; justify-self: start; }
+.cta.alt { background: var(--sun); color: var(--sun-ink); }
+
+.char { display: flex; align-items: center; gap: 12px; }
+.char b { font-family: var(--display); font-size: 1.6rem; text-transform: uppercase; color: var(--blue); }
+.bank { color: var(--muted); font-weight: 700; }
+
+.end { text-align: center; justify-items: center; }
+.end .big { font-family: var(--display); font-size: 3.4rem; font-weight: 700; color: var(--coral); font-variant-numeric: tabular-nums; }
+
+.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.team { border: 2px solid var(--line); border-radius: 16px; padding: 10px 14px; font-family: var(--display); font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+.team.on { border-color: var(--fg); box-shadow: 0 0 0 3px var(--sun); }
+.team .mk { font-size: 1.6rem; }
+.t-x { color: var(--coral); } .t-o { color: var(--blue); }
+.board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cell { aspect-ratio: 1; max-width: 100%; border-radius: 16px; border: 2px solid var(--line); background: var(--bg); color: var(--fg); font-family: var(--display); font-weight: 600; display: grid; place-items: center; padding: 6px; }
+.cell:hover:not(:disabled) { border-color: var(--coral); }
+.cell .n { font-size: .9rem; color: var(--muted); }
+.cell .m { font-size: clamp(2.4rem, 12vw, 4rem); line-height: 1; }
+.cell.win { background: var(--sun); color: var(--sun-ink); border-color: var(--sun); }
+.cell:disabled { cursor: default; }
+.dlg { border: 3px solid var(--coral); background: var(--card); border-radius: 22px; padding: 20px; display: grid; gap: 14px; }
+.dlg .opts .opt { flex: 1 1 120px; text-align: center; font-size: 1.15rem; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<main id="app"></main>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const app = $('#app');
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* ---------- Content (from the Canva deck) ---------- */
+const PHRASAL = ['head for', 'turn into', 'give away', 'set off', 'come up with', 'end up', 'get rid of', 'help yourself', 'try on'];
+const GAME1 = [
+  ['It is getting late, so let\'s ___ the station.', 'head for'],
+  ['Tadpoles ___ frogs after a few weeks.', 'turn into'],
+  ['She decided to ___ her old clothes to charity.', 'give away'],
+  ['We ___ at 6 a.m. to avoid the traffic.', 'set off'],
+  ['Can you ___ a better idea for the project?', 'come up with'],
+  ['If you never study, you will ___ failing the exam.', 'end up'],
+  ['I need to ___ these old magazines. They take up too much space.', 'get rid of'],
+  ['There are cookies on the table. ___!', 'help yourself'],
+  ['Can I ___ these jeans before I buy them?', 'try on']
+].map(([t, a]) => ({ eyebrow: 'Complete with the phrasal verb', text: t, answer: a, options: PHRASAL }));
+
+const MODAL_SETS = [
+  { who: 'Spiderman', bank: ['was able to', 'can', 'couldn\'t'], lines: [
+    ['He ___ climb walls.', 'can'], ['When he was younger, he ___ climb walls.', 'couldn\'t'], ['Yesterday, he ___ save a person from a dangerous situation.', 'was able to'] ] },
+  { who: 'Elsa', bank: ['managed to', 'couldn\'t', 'can'], lines: [
+    ['She ___ create ice.', 'can'], ['When she was a child, she ___ control her powers.', 'couldn\'t'], ['After a lot of practice, she ___ control her powers successfully.', 'managed to'] ] },
+  { who: 'Batman', bank: ['managed to', 'couldn\'t', 'can'], lines: [
+    ['When he was a child, he ___ fight like an adult.', 'couldn\'t'], ['He ___ fight criminals.', 'can'], ['One night, he ___ save the city.', 'managed to'] ] }
+];
+const GAME2 = MODAL_SETS.flatMap(s => s.lines.map(([t, a]) => ({ eyebrow: 'Complete with the modal to express ability', who: s.who, text: t, answer: a, options: s.bank })));
+
+const ASLIKE = [
+  ['She works ___ a nurse at the central hospital.', ['as'], 'AS is used for a job or role.'],
+  ['He runs fast, just ___ a cheetah.', ['like'], 'LIKE compares two different things.'],
+  ['Please leave the room ___ it is.', ['as'], '"As it is" means in the same state.'],
+  ['I used a heavy book ___ a hammer.', ['as'], 'AS is used for the function of an object.'],
+  ['___ I mentioned before, the exam is on Monday.', ['as'], '"As I mentioned" introduces a clause.'],
+  ['You look ___ you haven\'t slept all night!', ['like'], 'LIKE can mean "it seems that".'],
+  ['He speaks ___ an expert on history.', ['like'], 'He is not an expert, he sounds similar to one: LIKE.'],
+  ['I work ___ a teacher, but today I am playing ___ a student.', ['as', 'like'], 'Job or role: AS. Pretending, similar to: LIKE.'],
+  ['Soft drinks, ___ cola or lemonade, are sugary.', ['like'], 'LIKE introduces examples.']
+];
+
+/* ---------- Screens ---------- */
+function menu() {
+  const b = k => store.get('best-' + k);
+  const best = k => b(k) ? `<span class="best">Best: ${b(k)}</span>` : '';
+  app.innerHTML = `
+    <section class="hero"><p>Review time</p><h1>Vocabulary and grammar <span>games</span></h1><p>Pick a game and play on your own or with your class.</p></section>
+    <div class="menu">
+      <button class="pick" data-g="1"><span class="tag">Game 1</span><h2>Phrasal verbs</h2><small>Complete each sentence with the right phrasal verb. 9 questions. ${best('1')}</small></button>
+      <button class="pick" data-g="2"><span class="tag">Game 2</span><h2>Modal verbs of ability</h2><small>Spiderman, Elsa and Batman need can, couldn't, was able to or managed to. 9 questions. ${best('2')}</small></button>
+      <button class="pick" data-g="3"><span class="tag">Game 3</span><h2>AS vs LIKE tic-tac-toe</h2><small>Two teams. Choose the right word to win a square. First to get three in a row wins.</small></button>
+    </div>`;
+  app.querySelectorAll('.pick').forEach(el => el.onclick = () => ({ 1: () => quiz('1', 'Phrasal verbs', GAME1), 2: () => quiz('2', 'Modal verbs', GAME2), 3: ticTacToe })[el.dataset.g]());
+}
+
+function quiz(id, title, bank) {
+  const qs = shuffle(bank); let i = 0, score = 0;
+  function show() {
+    const q = qs[i]; let done = false;
+    const sentence = esc(q.text).replace('___', '<span class="gap" id="gap">&nbsp;</span>');
+    app.innerHTML = `
+      <div class="top"><button class="back" id="back">← Menu</button><span class="score">${score} / ${qs.length}</span></div>
+      <div class="bar"><i style="width:${(i / qs.length) * 100}%"></i></div>
+      <section class="panel">
+        <div class="eyebrow">${esc(q.eyebrow)} · ${i + 1} of ${qs.length}</div>
+        ${q.who ? `<div class="char"><b>${q.who}</b></div>` : ''}
+        <div class="sentence">${sentence}</div>
+        <div class="opts" id="opts">${shuffle(q.options).map(o => `<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+        <div class="fb" id="fb" aria-live="polite"></div>
+        <button class="cta" id="next" hidden>${i === qs.length - 1 ? 'See my score' : 'Next'}</button>
+      </section>`;
+    $('#back').onclick = menu;
+    app.querySelectorAll('.opt').forEach(btn => btn.onclick = () => {
+      if (done) return; done = true;
+      const ok = btn.dataset.o === q.answer, gap = $('#gap');
+      gap.textContent = q.answer; gap.classList.add(ok ? 'ok' : 'no');
+      if (ok) score++;
+      app.querySelectorAll('.opt').forEach(o => { o.disabled = true; if (o.dataset.o === q.answer) o.classList.add('ok'); });
+      if (!ok) { btn.classList.add('no'); gap.textContent = btn.dataset.o; gap.classList.add('no'); setTimeout(() => { gap.textContent = q.answer; gap.classList.remove('no'); gap.classList.add('ok'); }, 900); }
+      $('#fb').className = 'fb ' + (ok ? 'ok' : 'no');
+      $('#fb').textContent = ok ? 'Correct!' : `Not quite. The answer is "${q.answer}".`;
+      $('#next').hidden = false; $('#next').focus();
+      $('.score').textContent = `${score} / ${qs.length}`;
+    });
+    $('#next').onclick = () => { i++; i < qs.length ? show() : finish(); };
+  }
+  function finish() {
+    const prev = parseInt(store.get('best-' + id) || '0', 10);
+    if (score > prev) store.set('best-' + id, score + ' / ' + qs.length);
+    const msg = score === qs.length ? 'Perfect score!' : score >= qs.length * 0.7 ? 'Great job!' : 'Good try. Play again to improve.';
+    app.innerHTML = `
+      <div class="top"><button class="back" id="back">← Menu</button></div>
+      <section class="panel end"><div class="eyebrow">${esc(title)}</div><div class="big">${score} / ${qs.length}</div><h2>${msg}</h2>
+        <button class="cta" id="again">Play again</button></section>`;
+    $('#back').onclick = menu; $('#again').onclick = () => quiz(id, title, bank);
+  }
+  show();
+}
+
+function ticTacToe() {
+  const sq = ASLIKE.map(([t, a, why], n) => ({ n: n + 1, t, a, why, owner: null }));
+  const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  let turn = 'X', winLine = null, open = null, msg = 'Team Coral starts. Pick a square.';
+  const names = { X: 'Team Coral', O: 'Team Blue' }, marks = { X: '✕', O: '○' };
+  function check() {
+    for (const l of LINES) if (l.every(i => sq[i].owner === turn)) return l;
+    return null;
+  }
+  function draw() {
+    const over = winLine || sq.every(s => s.owner);
+    app.innerHTML = `
+      <div class="top"><button class="back" id="back">← Menu</button><button class="back" id="reset">New game</button></div>
+      <div class="teams">
+        ${['X', 'O'].map(t => `<div class="team t-${t.toLowerCase()} ${!over && turn === t ? 'on' : ''}"><span>${names[t]}</span><span class="mk">${marks[t]}</span></div>`).join('')}
+      </div>
+      <div class="fb" id="fb" aria-live="polite">${esc(over ? (winLine ? `${names[turn]} wins!` : 'Draw! Play again.') : msg)}</div>
+      <div class="board">${sq.map((s, i) => `<button class="cell ${winLine && winLine.includes(i) ? 'win' : ''}" data-i="${i}" ${s.owner || over ? 'disabled' : ''} aria-label="Square ${s.n}">${s.owner ? `<span class="m t-${s.owner.toLowerCase()}">${marks[s.owner]}</span>` : `<span class="n">${s.n}</span>`}</button>`).join('')}</div>
+      ${open !== null ? dialog() : ''}`;
+    $('#back').onclick = menu; $('#reset').onclick = ticTacToe;
+    app.querySelectorAll('.cell').forEach(c => c.onclick = () => { open = +c.dataset.i; picks = []; draw(); });
+    if (open !== null) wire();
+  }
+  let picks = [];
+  function dialog() {
+    const s = sq[open], parts = s.t.split('___');
+    const two = s.a.length === 2;
+    const sentence = parts.map((p, k) => esc(p) + (k < parts.length - 1 ? `<span class="gap" id="g${k}">${picks[k] ? picks[k].toUpperCase() : '&nbsp;'}</span>` : '')).join('');
+    return `<section class="dlg" role="dialog" aria-label="Question">
+      <div class="eyebrow">${names[turn]} · square ${s.n}${two ? ' · two blanks' : ''}</div>
+      <div class="sentence">${sentence}</div>
+      <div class="opts">${['as', 'like'].map(o => `<button class="opt" data-o="${o}">${o.toUpperCase()}</button>`).join('')}</div></section>`;
+  }
+  function wire() {
+    const s = sq[open];
+    app.querySelectorAll('.dlg .opt').forEach(b => b.onclick = () => {
+      picks.push(b.dataset.o);
+      if (picks.length < s.a.length) { draw(); return; }
+      const ok = picks.every((p, k) => p === s.a[k]);
+      if (ok) { s.owner = turn; winLine = check(); msg = ''; }
+      else { msg = `${names[turn]} missed it: ${s.a.map(x => x.toUpperCase()).join(' + ')}. ${s.why}`; }
+      const was = turn; open = null; picks = [];
+      if (!winLine) turn = turn === 'X' ? 'O' : 'X';
+      if (ok && !winLine) msg = `Correct! ${s.why} Now ${names[turn]}.`;
+      else if (!ok) msg += ` Now ${names[turn]}.`;
+      draw();
+    });
+  }
+  draw();
+}
+menu();
+</script>
+
+</body>
+</html>
